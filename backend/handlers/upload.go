@@ -75,7 +75,7 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	// store the meta JSON string in Redis with 24h ttl
 	key := "meta:" + id
-	err = Rdb.Set(ctx, key, metaStr, 24*time.Hour).Err()
+	err = Rdb.Set(Ctx, key, metaStr, 24*time.Hour).Err()
 	if err != nil {
 		http.Error(w, "could not store metadata", http.StatusInternalServerError)
 		return

@@ -9,7 +9,7 @@ import (
 )
 
 var Rdb *redis.Client
-var ctx = context.Background()
+var Ctx = context.Background()
 
 func InitRedis() {
 	Rdb = redis.NewClient(&redis.Options{
@@ -18,7 +18,7 @@ func InitRedis() {
 		Password: os.Getenv("REDIS_PASSWORD"),
 		DB:       0,
 		TLSConfig: &tls.Config{
-			InsecureSkipVerify: true,
+			InsecureSkipVerify: false, // Set to false for production
 		},
 	})
 }

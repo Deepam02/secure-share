@@ -3,8 +3,10 @@ package handlers
 import (
 	"net/http"
 	"strings"
+	
 )
 
+// Directly use the global Ctx variable
 func MetaHandler(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/meta/")
 	if id == "" {
@@ -13,7 +15,7 @@ func MetaHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	key := "meta:" + id
-	metaStr, err := Rdb.Get(ctx, key).Result()
+	metaStr, err := Rdb.Get(Ctx, key).Result()
 	if err != nil {
 		http.Error(w, "not found or expired", http.StatusNotFound)
 		return

@@ -25,10 +25,17 @@ func withCORS(h http.HandlerFunc) http.HandlerFunc {
 func main() {
 	handlers.InitRedis()
 
+	// Validate Redis connection
+	if _, err := handlers.Rdb.Ping(handlers.Ctx).Result(); err != nil {
+		log.Fatalf("Failed to connect to Redis: %v", err)
+	}
+
 	http.HandleFunc("/upload", withCORS(handlers.UploadHandler))
 	http.HandleFunc("/meta/", withCORS(handlers.MetaHandler))
 	http.HandleFunc("/file/", withCORS(handlers.FileHandler))
 
 	log.Println("Server running on port 10000")
-	http.ListenAndServe(":10000", nil)
+	if err := http.ListenAndServe(":10000", nil); err != nil {
+		log.Fatalf("Server failed: %v", err)
+	}
 }
