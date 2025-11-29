@@ -15,13 +15,15 @@ var ctx = context.Background()
 func InitRedis() {
 	host := os.Getenv("REDIS_HOST")
 	pass := os.Getenv("REDIS_PASSWORD")
+	user := os.Getenv("REDIS_USER") // new
 
-	// show in terminal for debugging
-	println("REDIS_HOST =", host)
-	println("REDIS_PASSWORD =", pass)
+	println("Redis host =", host)
+	println("Redis user =", user)
+	println("Redis pass =", pass)
 
 	Rdb = redis.NewClient(&redis.Options{
 		Addr:     host,
+		Username: user, // ADD THIS
 		Password: pass,
 		DB:       0,
 		TLSConfig: &tls.Config{
@@ -29,10 +31,11 @@ func InitRedis() {
 		},
 	})
 
-	// test connection
 	_, err := Rdb.Ping(ctx).Result()
 	if err != nil {
 		println("PING ERROR =", err.Error())
+	} else {
+		println("PING SUCCESS")
 	}
 }
 
