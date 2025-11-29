@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 	"os"
 
@@ -15,6 +16,10 @@ func InitRedis() {
 	Rdb = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_HOST"),
 		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 	})
 }
 
