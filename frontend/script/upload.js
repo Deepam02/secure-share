@@ -25,6 +25,7 @@ async function uploadFiles() {
 
   formData.append("meta", JSON.stringify(meta))
   let data = await apiUpload(formData)
+  if (!data) return // Stop if upload failed
 
   result.innerHTML = `
      <p>Link is ready:</p>
