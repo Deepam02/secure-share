@@ -1,17 +1,75 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="styles/style.css">
-  <title>View Files</title>
-</head>
-<body>
-  <h2>Files</h2>
-  <div id="filesList"></div>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Share - Download Files</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <div class="glass-card">
+      <h1>Secure Share</h1>
+      <p class="subtitle">Enter password to unlock files</p>
+
+      <div id="auth-form">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <button class="btn btn-primary" id="unlock-btn" onclick="handleUnlock()">Unlock Files</button>
+      </div>
+
+      <div id="file-view" class="hidden">
+        <div class="file-list" id="files-list">
+          <!-- Files will be injected here -->
+        </div>
+        <button class="btn btn-secondary" onclick="downloadAll()" style="margin-top: 20px;">Download All (Zip)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="script/config.js"></script>
   <script src="script/crypto.js"></script>
   <script src="script/api.js"></script>
+  <script src="script/ui.js"></script>
   <script src="script/view.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      setupPasswordToggle('password');
+
+      // Auto-focus password field
+      document.getElementById('password').focus();
+
+      // Allow enter key to submit
+      document.getElementById('password').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleUnlock();
+      });
+    });
+
+    async function handleUnlock() {
+      setLoading('unlock-btn', true, 'Unlocking...');
+      try {
+        await loadFiles();
+        document.getElementById('auth-form').classList.add('hidden');
+        document.getElementById('file-view').classList.remove('hidden');
+        document.querySelector('.subtitle').textContent = 'Files unlocked successfully';
+        showToast('Files unlocked', 'success');
+      } catch (e) {
+        console.error(e);
+        showToast(e.message || 'Incorrect password or error', 'error');
+        setLoading('unlock-btn', false);
+      }
+    }
+  </script>
 </body>
+
 </html>

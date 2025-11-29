@@ -1,19 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="styles/style.css">
-  <title>Secure Share</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Share - Encrypted File Sharing</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h2>Secure Upload</h2>
-  <input type="file" id="files" multiple><br><br>
-  <input type="password" id="password" placeholder="Enter password"><br><br>
-  <button onclick="uploadFiles()">Encrypt & Upload</button>
-  <p id="result"></p>
+    <div class="container">
+        <div class="glass-card">
+            <h1>Secure Share</h1>
+            <p class="subtitle">Client-side encrypted file sharing</p>
 
-  <script src="script/config.js"></script>
-  <script src="script/crypto.js"></script>
-  <script src="script/api.js"></script>
-  <script src="script/upload.js"></script>
+            <div id="upload-form">
+                <div class="drop-zone" id="drop-zone">
+                    <span class="drop-zone-icon">📁</span>
+                    <span class="drop-zone-text">Drag & drop files here or click to browse</span>
+                    <input type="file" id="files" multiple class="hidden">
+                </div>
+                
+                <div id="file-list" class="file-list"></div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="password">Encryption Password</label>
+                    <input type="password" id="password" placeholder="Enter a strong password">
+                </div>
+
+                <button class="btn btn-primary" id="upload-btn" onclick="handleUpload()">Encrypt & Upload</button>
+            </div>
+
+            <div id="result" class="hidden" style="margin-top: 20px; text-align: center;">
+                <p style="margin-bottom: 10px; color: var(--success-color);">Files uploaded successfully!</p>
+                <div class="form-group">
+                    <input type="text" id="link" readonly onclick="this.select()">
+                </div>
+                <button class="btn btn-secondary" onclick="copyLink()">Copy Link</button>
+                <button class="btn btn-secondary" onclick="resetForm()" style="margin-top: 10px;">Upload More</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script/config.js"></script>
+    <script src="script/crypto.js"></script>
+    <script src="script/api.js"></script>
+    <script src="script/ui.js"></script>
+    <script src="script/upload.js"></script>
+    
+    <script>
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            setupDragAndDrop('drop-zone', 'files', 'file-list');
+            setupPasswordToggle('password');
+        });
+
+        async function handleUpload() {
+            setLoading('upload-btn', true, 'Encrypting & Uploading...');
+            try {
+                await uploadFiles();
+            } catch (e) {
+                console.error(e);
+                showToast(e.message || 'Upload failed', 'error');
+            } finally {
+                setLoading('upload-btn', false);
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('upload-form').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('files').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('file-list').innerHTML = '';
+            document.getElementById('drop-zone').querySelector('.drop-zone-text').textContent = 'Drag & drop files here or click to browse';
+        }
+    </script>
 </body>
 </html>

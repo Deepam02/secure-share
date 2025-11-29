@@ -1,14 +1,19 @@
 async function uploadFiles() {
   let files = document.getElementById('files').files
   let password = document.getElementById('password').value
-  let result = document.getElementById('result')
 
-  if (!files.length) return alert('choose files')
-  if (!password) return alert('enter password')
+  if (!files.length) {
+    showToast('Please select at least one file', 'error');
+    throw new Error('No files selected');
+  }
+  if (!password) {
+    showToast('Please enter a password', 'error');
+    throw new Error('No password entered');
+  }
 
   let salt = generateSalt()
   let key = await deriveKey(password, salt)
-  let meta = { files: [], salt: btoa(String.fromCharCode(...salt)) } // Include salt in metadata
+  let meta = { files: [], salt: btoa(String.fromCharCode(...salt)) }
   let formData = new FormData()
 
   for (let f of files) {
@@ -24,19 +29,23 @@ async function uploadFiles() {
   }
 
   formData.append("meta", JSON.stringify(meta))
-  let data = await apiUpload(formData)
-  if (!data) return // Stop if upload failed
 
-  result.innerHTML = `
-     <p>Link is ready:</p>
-     <input id="link" style="width:80%" value="${FRONTEND_URL}/view.html?id=${data.id}" readonly>
-     <button onclick="copyLink()">Copy</button>
-  `
+  let data = await apiUpload(formData)
+  if (!data) throw new Error('Upload failed');
+
+  // Show result
+  document.getElementById('upload-form').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+
+  const linkInput = document.getElementById('link');
+  linkInput.value = `${FRONTEND_URL}/view.html?id=${data.id}`;
+
+  showToast('Files uploaded successfully!', 'success');
 }
 
 function copyLink() {
   let input = document.getElementById("link")
   input.select()
   document.execCommand("copy")
-  alert("Copied")
+  showToast('Link copied to clipboard', 'success');
 }
