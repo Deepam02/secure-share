@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles/style.css">
+  <title>Secure Share</title>
+</head>
+<body>
+  <h2>Secure Upload</h2>
+  <input type="file" id="files" multiple><br><br>
+  <input type="password" id="password" placeholder="Enter password"><br><br>
+  <button onclick="uploadFiles()">Encrypt & Upload</button>
+  <p id="result"></p>
+
+  <script src="script/config.js"></script>
+  <script src="script/crypto.js"></script>
+  <script src="script/api.js"></script>
+  <script src="script/upload.js"></script>
+</body>
+</html>

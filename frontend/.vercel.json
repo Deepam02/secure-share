@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://secure-share-lxwi.onrender.com/:path*"
+    }
+  ]
+}
